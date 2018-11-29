@@ -1,2 +1,54 @@
 * format-table
 Emacs can access many RDBMS systems via their command-line utilities using SQLi/comint, however each utility has its own output format for tables and affected row counts.  This library allows for conversion between the output formats of many common RDBMS systems, as well as org tables and json.
+
+** Usage
+
+#+BEGIN_SRC emacs-lisp
+(format-table string-containing-table input-mode-to-match-string desired-output-mode)
+#+END_SRC
+
+For instance, to reformat an org-mode table, do the following:
+#+BEGIN_SRC emacs-lisp
+(let ((to-format
+"| Foo | Bar |
+|-----+-----|
+|   1 |   2 |
+|   3 |   4 |"))
+  (format-table to-format 'org 'mysql))
+#+END_SRC
+
+Which will render the following output:
+#+BEGIN_SRC
++-----+-----+
+| Foo | Bar |
++-----+-----+
+| 1   | 2   |
+| 3   | 4   |
++-----+-----+
+2 rows in set (0.00 sec)
+#+END_SRC
+
+** Supported Formats
+
+The following input/output formats are currently supported:
+- ms
+- org
+- mysql
+- postgresql
+- json
+
+New formats can be added by adding them to `format-table-format-alist' at runtime.
+
+*** JSON note
+
+Currently only exporting/importing arrays of hashes is supported.  For instance, that previous org table:
+
+| Foo | Bar |
+|-----+-----|
+|   1 |   2 |
+|   3 |   4 |
+
+Will render as:
+#+BEGIN_SRC javascript
+[{"Foo":"1","Bar":"2"},{"Foo":3,"Bar":"4"}]
+#+END_SRC
