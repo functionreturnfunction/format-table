@@ -50,5 +50,5 @@ Currently only exporting/importing arrays of hashes is supported.  For instance,
 
 Will render as:
 #+BEGIN_SRC javascript
-[{"Foo":"1","Bar":"2"},{"Foo":3,"Bar":"4"}]
+[{"Foo":"1","Bar":"2"},{"Foo":"3","Bar":"4"}]
 #+END_SRC
