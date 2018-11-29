@@ -94,13 +94,13 @@
 (defun format-table-remove-noise (lines input-mode)
   "Given the set of table LINES and some extra information in INPUT-MODE, filter out any empty lines or lines which otherwise do not belong to the table of values."
   (let* ((row-count-format (plist-get input-mode :row-count-format))
-         (regexp (if (nilp row-count-format) nil (format row-count-format "[[:digit:]]+")))
+         (regexp (if (not row-count-format) nil (format row-count-format "[[:digit:]]+")))
          ret)
     (dolist (cur-line (reverse lines) ret)
       (if (not (or (string-equal "" cur-line)
-                   (if (nilp regexp) nil (string-match regexp cur-line))))
+                   (if (not regexp) nil (string-match regexp cur-line))))
           (push cur-line ret)))
-    (if (nilp ret) nil
+    (if (not ret) nil
       (setq ret (if (plist-get input-mode :top-border-fn) (-slice ret 1) ret))
       (if (plist-get input-mode :top-border-fn)
           (-slice ret 0 (1- (length ret))) ret))))
@@ -219,7 +219,7 @@ otherwise values will be padded to the right with spaces."
 (defun format-table-render-row-count (count output-mode)
   "Render the given row count COUNT for the given OUTPUT-MODE."
   (let ((output-format (plist-get output-mode :row-count-format)))
-    (if (nilp output-format) ""
+    (if (not output-format) ""
       (replace-regexp-in-string
        (regexp-quote "[[:digit:]]+.[[:digit:]]+") "0.00"
        (replace-regexp-in-string
@@ -254,7 +254,7 @@ otherwise values will be padded to the right with spaces."
     (let* ((lines (split-string str "[
 ]+"))
            (lines (format-table-remove-noise lines input-mode)))
-      (if (nilp lines) nil
+      (if (not lines) nil
         (let* ((col-widths (format-table-get-col-widths (car (cdr lines)) input-mode)))
           (format-table-parse-table lines col-widths input-mode))))))
 
@@ -263,7 +263,7 @@ otherwise values will be padded to the right with spaces."
   (let* ((input-mode (format-table-get-format input-mode))
          (output-mode (format-table-get-format output-mode))
          (table (format-table-cleanup-and-parse str input-mode)))
-    (if (nilp table)
+    (if (not table)
         str
       (concat
        (format-table-render-table table output-mode)

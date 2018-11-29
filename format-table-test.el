@@ -18,7 +18,7 @@
     (buffer-string)))
 
 (defun compare-result-lines (expected-lines actual-lines)
-  (if (nilp expected-lines) nil
+  (if (not expected-lines) nil
     (progn
       (should (string-equal (car expected-lines) (car actual-lines)))
       (compare-result-lines (cdr expected-lines) (cdr actual-lines)))))
