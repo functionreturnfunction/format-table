@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'subr-x)
 (require 'json)
 
 (defvar format-table-format-alist
