@@ -1,0 +1,8 @@
+ TABLE_CATALOG | TABLE_SCHEMA |      TABLE_NAME       | TABLE_TYPE 
+---------------+--------------+-----------------------+------------
+ master        | dbo          | spt_fallback_db       | BASE TABLE 
+ master        | dbo          | spt_fallback_dev      | BASE TABLE 
+ master        | dbo          | spt_fallback_usg      | BASE TABLE 
+ master        | dbo          | spt_monitor           | BASE TABLE 
+ master        | dbo          | MSreplication_options | BASE TABLE 
+(5 rows)
