@@ -165,9 +165,11 @@
             (-zip-with 'max (-map 'length cur-row) last)))))
 
 (defun format-table-render-row (row max-col-widths output-mode &optional pad-fn)
-  "Given the list of values ROW, the list of MAX-COL-WIDTHS, and delimiter information in OUTPUT-MODE, render a table row with the proper column separators and a newline at the end.
+  "Render a table row with the proper column separators and a newline.
 
-Optionally use PAD-FN to pad each column value, otherwise values will be padded to the right with spaces."
+Arguments are the list of values ROW, the list of MAX-COL-WIDTHS, and delimiter
+information in OUTPUT-MODE.  Optionally use PAD-FN to pad each column value,
+otherwise values will be padded to the right with spaces."
   (let ((pad-fn (or pad-fn 'format-table-pad-right)))
     (concat
      (plist-get output-mode :begin-row)
