@@ -1,4 +1,4 @@
-;;; formats-table.el --- Parse and reformat tabular data.  -*- lexical-binding: t; -*-
+;;; format-table.el --- Parse and reformat tabular data.  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Jason Duncan, all rights reserved
 
