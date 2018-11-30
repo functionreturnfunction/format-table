@@ -172,7 +172,7 @@ Arguments are the list of values ROW, the list of MAX-COL-WIDTHS, and delimiter
 information in OUTPUT-MODE.  Optionally use PAD-FN to pad each column value,
 otherwise values will be padded to the right with spaces."
   (let ((pad-fn (or pad-fn #'format-table-pad-right)))
-    (concat
+    (list
      (plist-get output-mode :begin-row)
      (string-join
       (-zip-with pad-fn row max-col-widths)
@@ -186,12 +186,13 @@ otherwise values will be padded to the right with spaces."
 
 (defun format-table-render-separator-row (max-col-widths output-mode)
   "Given the list of MAX-COL-WIDTHS and delimiter information in OUTPUT-MODE, render a row which separates the header row from the rest of the rows."
-  (concat (plist-get output-mode :separator-begin-row)
-          (string-join
-           (-map #'format-table-generate-dash-string max-col-widths)
-           (plist-get output-mode :separator-col-separator))
-          (plist-get output-mode :separator-end-row)
-          hard-newline))
+  (list
+   (plist-get output-mode :separator-begin-row)
+   (string-join
+    (-map #'format-table-generate-dash-string max-col-widths)
+    (plist-get output-mode :separator-col-separator))
+   (plist-get output-mode :separator-end-row)
+   hard-newline))
 
 (defun format-table-render-json (table)
   "Render the TABLE of values as a json string."
@@ -204,17 +205,16 @@ otherwise values will be padded to the right with spaces."
 (defun format-table-render-table (table output-mode)
   "Given the TABLE of values and delimiter information in OUTPUT-MODE, re-render the table as a string."
   (if (equal output-mode 'json)
-      (format-table-render-json table)
+      (list (format-table-render-json table))
     (let ((top-border-fn (plist-get output-mode :top-border-fn))
           (bottom-border-fn (plist-get output-mode :bottom-border-fn))
           (header-pad-fn (plist-get output-mode :header-pad-fn))
           (max-col-widths (plist-get table :max-col-widths)))
-      (concat
+      (append
        (if top-border-fn (funcall top-border-fn max-col-widths output-mode))
        (format-table-render-row (plist-get table :header) max-col-widths output-mode header-pad-fn)
        (format-table-render-separator-row max-col-widths output-mode)
-       (string-join
-        (--map (format-table-render-row it max-col-widths output-mode) (plist-get table :body)))
+       (apply #'append (--map (format-table-render-row it max-col-widths output-mode) (plist-get table :body)))
        (if bottom-border-fn (funcall bottom-border-fn max-col-widths output-mode))))))
 
 (defun format-table-render-row-count (count output-mode)
@@ -266,9 +266,11 @@ otherwise values will be padded to the right with spaces."
          (table (format-table-cleanup-and-parse str input-mode)))
     (if (not table)
         str
-      (concat
-       (format-table-render-table table output-mode)
-       (format-table-render-row-count (plist-get table :row-count) output-mode)))))
+      (string-join
+       (append
+        (format-table-render-table table output-mode)
+        (list
+         (format-table-render-row-count (plist-get table :row-count) output-mode)))))))
 
 (provide 'format-table)
 ;;; format-table.el ends here

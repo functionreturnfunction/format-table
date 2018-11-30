@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (require 'ert)
+(require 'format-table)
 (require 'format-table-test-helper)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -105,19 +106,26 @@
 (ert-deftest format-table-render-row-should-render-row-for-ms ()
   (let ((expected "foo bar
 ")
-        (actual (format-table-render-row '("foo" "bar") '(3 3) (alist-get 'ms format-table-format-alist))))
+        (actual
+         (string-join
+          (format-table-render-row
+           '("foo" "bar") '(3 3) (alist-get 'ms format-table-format-alist)))))
     (should (string-equal expected actual))))
 
 (ert-deftest format-table-render-row-should-render-row-for-org ()
   (let ((expected "| foo | bar |
 ")
-        (actual (format-table-render-row '("foo" "bar") '(3 3) (alist-get 'org format-table-format-alist))))
+        (actual
+         (string-join
+          (format-table-render-row '("foo" "bar") '(3 3) (alist-get 'org format-table-format-alist)))))
     (should (string-equal expected actual))))
 
 (ert-deftest format-table-render-row-should-render-row-for-mysql ()
   (let ((expected "| foo | bar |
 ")
-        (actual (format-table-render-row '("foo" "bar") '(3 3) (alist-get 'mysql format-table-format-alist))))
+        (actual
+         (string-join
+          (format-table-render-row '("foo" "bar") '(3 3) (alist-get 'mysql format-table-format-alist)))))
     (should (string-equal expected actual))))
 
 ;;;;;;;;format-table-render-separator-row;;;;;;;;;
@@ -125,19 +133,25 @@
 (ert-deftest format-table-render-separator-row-should-render-separator-row-for-ms ()
   (let ((expected "--- ---
 ")
-        (actual (format-table-render-separator-row '(3 3) (alist-get 'ms format-table-format-alist))))
+        (actual
+         (string-join
+          (format-table-render-separator-row '(3 3) (alist-get 'ms format-table-format-alist)))))
     (should (string-equal expected actual))))
 
 (ert-deftest format-table-render-separator-row-should-render-separator-row-for-org ()
   (let ((expected "|-----+-----|
 ")
-        (actual (format-table-render-separator-row '(3 3) (alist-get 'org format-table-format-alist))))
+        (actual
+         (string-join
+          (format-table-render-separator-row '(3 3) (alist-get 'org format-table-format-alist)))))
     (should (string-equal expected actual))))
 
 (ert-deftest format-table-render-separator-row-should-render-separator-row-for-mysql ()
   (let ((expected "+-----+-----+
 ")
-        (actual (format-table-render-separator-row '(3 3) (alist-get 'mysql format-table-format-alist))))
+        (actual
+         (string-join
+          (format-table-render-separator-row '(3 3) (alist-get 'mysql format-table-format-alist)))))
     (should (string-equal expected actual))))
 
 ;;;;;;;;;;;;;;format-table-split-row;;;;;;;;;;;;;;
