@@ -10,7 +10,8 @@ Emacs can access many RDBMS systems via their command-line utilities using SQLi/
 For instance, to reformat an org-mode table, do the following:
 #+BEGIN_SRC emacs-lisp
 (let ((to-format
-"| Foo | Bar |
+"
+| Foo | Bar |
 |-----+-----|
 |   1 |   2 |
 |   3 |   4 |"))
@@ -43,10 +44,15 @@ New formats can be added by adding them to `format-table-format-alist' at runtim
 
 Currently only exporting/importing arrays of hashes is supported.  For instance, that previous org table:
 
+#+BEGIN_SRC emacs-lisp
+(let ((to-format
+"
 | Foo | Bar |
 |-----+-----|
 |   1 |   2 |
-|   3 |   4 |
+|   3 |   4 |"))
+  (format-table to-format 'org 'json))
+#+END_SRC
 
 Will render as:
 #+BEGIN_SRC javascript
