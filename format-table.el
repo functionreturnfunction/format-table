@@ -122,8 +122,8 @@
          (separator-end-row (plist-get input-mode :separator-end-row))
          (separator-col-separator (plist-get input-mode :separator-col-separator))
          (dashes (format-table-trim-row dashes separator-begin-row separator-end-row)))
-    (-map 'length (split-string dashes
-                                (regexp-quote separator-col-separator)))))
+    (-map #'length (split-string dashes
+                                 (regexp-quote separator-col-separator)))))
 
 (defun format-table-split-row (row col-widths input-mode)
   "Split the given string ROW based on the fixed positions listed in COL-WIDTHS and any additional information in INPUT-MODE."
@@ -163,7 +163,7 @@
   (let ((last (make-list (length (car table)) 0)))
     (dolist (cur-row table last)
       (setq last
-            (-zip-with 'max (-map 'length cur-row) last)))))
+            (-zip-with #'max (-map #'length cur-row) last)))))
 
 (defun format-table-render-row (row max-col-widths output-mode &optional pad-fn)
   "Render a table row with the proper column separators and a newline.
@@ -171,7 +171,7 @@
 Arguments are the list of values ROW, the list of MAX-COL-WIDTHS, and delimiter
 information in OUTPUT-MODE.  Optionally use PAD-FN to pad each column value,
 otherwise values will be padded to the right with spaces."
-  (let ((pad-fn (or pad-fn 'format-table-pad-right)))
+  (let ((pad-fn (or pad-fn #'format-table-pad-right)))
     (concat
      (plist-get output-mode :begin-row)
      (string-join
@@ -188,7 +188,7 @@ otherwise values will be padded to the right with spaces."
   "Given the list of MAX-COL-WIDTHS and delimiter information in OUTPUT-MODE, render a row which separates the header row from the rest of the rows."
   (concat (plist-get output-mode :separator-begin-row)
           (string-join
-           (-map 'format-table-generate-dash-string max-col-widths)
+           (-map #'format-table-generate-dash-string max-col-widths)
            (plist-get output-mode :separator-col-separator))
           (plist-get output-mode :separator-end-row)
           hard-newline))
@@ -197,7 +197,7 @@ otherwise values will be padded to the right with spaces."
   "Render the TABLE of values as a json string."
   (let ((vec []))
     (dolist (cur-row (plist-get table :body) vec)
-      (let ((rec (-zip-with 'cons (plist-get table :header) cur-row)))
+      (let ((rec (-zip-with #'cons (plist-get table :header) cur-row)))
         (setq vec (vconcat vec (list rec)))))
     (json-encode vec)))
 
@@ -234,18 +234,18 @@ otherwise values will be padded to the right with spaces."
 
 (defun format-table-parse-json-gather-column-values (obj)
   "Gather cdrs from alist OBJ."
-  (-map 'cdr obj))
+  (-map #'cdr obj))
 
 (defun format-table-parse-json-gather-column-names (obj)
   "Gather cars from alist OBJ."
-  (-map 'car obj))
+  (-map #'car obj))
 
 (defun format-table-parse-json (str)
   "Parse the json string STR to a table of values as a plist."
   (let* ((json-key-type 'string)
          (vec (append (json-read-from-string str) nil))
          (header (format-table-parse-json-gather-column-names (car vec)))
-         (body (-map 'format-table-parse-json-gather-column-values vec)))
+         (body (-map #'format-table-parse-json-gather-column-values vec)))
     (format-table-assemble-table header body)))
 
 (defun format-table-cleanup-and-parse (str input-mode)
