@@ -1,0 +1,11 @@
+*.elc
+*.log
+*.html
+/testing-clean-install/
+/elpa/
+*.tar
+.elpa
+.cask
+/_site/
+/dist/
+flycheck_*.el
