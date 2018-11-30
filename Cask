@@ -5,4 +5,5 @@
 (development
  (depends-on "dash")
  (depends-on "ert")
- (depends-on "ert-runner"))
+ (depends-on "ert-runner")
+ (depends-on "undercover"))
