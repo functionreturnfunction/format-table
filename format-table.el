@@ -172,13 +172,14 @@ Arguments are the list of values ROW, the list of MAX-COL-WIDTHS, and delimiter
 information in OUTPUT-MODE.  Optionally use PAD-FN to pad each column value,
 otherwise values will be padded to the right with spaces."
   (let ((pad-fn (or pad-fn #'format-table-pad-right)))
-    (list
-     (plist-get output-mode :begin-row)
-     (string-join
-      (-zip-with pad-fn row max-col-widths)
-      (plist-get output-mode :col-separator))
-     (plist-get output-mode :end-row)
-     hard-newline)))
+    (append
+     (list
+      (plist-get output-mode :begin-row))
+     (-interpose (plist-get output-mode :col-separator)
+                 (-zip-with pad-fn row max-col-widths))
+     (list
+      (plist-get output-mode :end-row)
+      hard-newline))))
 
 (defun format-table-generate-dash-string (length)
   "Generate a string of hyphens LENGTH chars long."
@@ -186,13 +187,14 @@ otherwise values will be padded to the right with spaces."
 
 (defun format-table-render-separator-row (max-col-widths output-mode)
   "Given the list of MAX-COL-WIDTHS and delimiter information in OUTPUT-MODE, render a row which separates the header row from the rest of the rows."
-  (list
-   (plist-get output-mode :separator-begin-row)
-   (string-join
-    (-map #'format-table-generate-dash-string max-col-widths)
-    (plist-get output-mode :separator-col-separator))
-   (plist-get output-mode :separator-end-row)
-   hard-newline))
+  (append
+   (list
+    (plist-get output-mode :separator-begin-row))
+   (-interpose (plist-get output-mode :separator-col-separator)
+               (-map #'format-table-generate-dash-string max-col-widths))
+   (list
+    (plist-get output-mode :separator-end-row)
+    hard-newline)))
 
 (defun format-table-render-json (table)
   "Render the TABLE of values as a json string."
