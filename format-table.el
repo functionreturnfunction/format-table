@@ -244,8 +244,7 @@ otherwise values will be padded to the right with spaces."
   "Parse the given string STR using delimiter information in INPUT-MODE to a table of values as a plist."
   (if (equal input-mode 'json)
       (format-table-parse-json str)
-    (let* ((lines (split-string str "[
-]+"))
+    (let* ((lines (split-string str "[\n]+"))
            (lines (format-table-remove-noise lines input-mode)))
       (when lines
         (let* ((col-widths (format-table-get-col-widths (car (cdr lines)) input-mode)))
