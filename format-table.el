@@ -106,22 +106,12 @@
       (if (plist-get input-mode :top-border-fn)
           (-slice ret 0 (1- (length ret))) ret))))
 
-(defun format-table-trim-row (row begin-row end-row)
-  "Given the string ROW trim the string BEGIN-ROW from the beginning and END-ROW from the end."
-  (replace-regexp-in-string
-   (concat "^" (regexp-quote begin-row))
-   ""
-   (replace-regexp-in-string
-    (concat (regexp-quote end-row) "$")
-    ""
-    row)))
-
 (defun format-table-get-col-widths (dashes input-mode)
   "Using the line of all DASHES from the table and the INPUT-MODE, determine the widths of the columns and return them in a list."
-  (let* ((separator-begin-row (plist-get input-mode :separator-begin-row))
-         (separator-end-row (plist-get input-mode :separator-end-row))
+  (let* ((separator-begin-row (regexp-quote (plist-get input-mode :separator-begin-row)))
+         (separator-end-row (regexp-quote (plist-get input-mode :separator-end-row)))
          (separator-col-separator (plist-get input-mode :separator-col-separator))
-         (dashes (format-table-trim-row dashes separator-begin-row separator-end-row)))
+         (dashes (string-trim dashes separator-begin-row separator-end-row)))
     (-map #'length (split-string dashes
                                  (regexp-quote separator-col-separator)))))
 
@@ -130,7 +120,7 @@
   (let* ((begin-row (plist-get input-mode :begin-row))
          (end-row (plist-get input-mode :end-row))
          (col-separator (plist-get input-mode :col-separator))
-         (row (format-table-trim-row row begin-row end-row))
+         (row (string-trim row begin-row end-row))
          split)
     (reverse
      (dolist (cur-width col-widths split)
