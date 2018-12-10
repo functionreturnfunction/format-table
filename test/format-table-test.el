@@ -160,6 +160,14 @@
                  (alist-get 'ms format-table-format-alist))))
     (should (equal expected actual))))
 
+(ert-deftest format-table-split-row-should-not-choke-on-shorter-than-expected-string ()
+  (let ((expected '("" "" "" ""))
+        (actual (format-table-split-row
+                 ""
+                 '(13 12 21 10)
+                 (alist-get 'ms format-table-format-alist))))
+    (should (equal expected actual))))
+
 ;;;;;;;;;;format-table-render-row-count;;;;;;;;;;;
 
 (ert-deftest format-table-render-row-count-should-render-for-org ()
