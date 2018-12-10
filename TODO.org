@@ -1,0 +1,33 @@
+** TODO Some docstrings are quite long which lets you pass package-lint and makes for good enough M-x apropos output, but they wrap poorly in M-x help.
+** TODO "delimiater" -> "delimiter"
+** TODO Since you're using Emacs 25 you can use the string-trim functions (could format-table-trim-row be rewritten as just (string-trim row begin-row end-row)?
+** TODO Could the first conditional in format-table-remove-noise be written either as:
+
+#+BEGIN_SRC emacs-lisp
+    (unless (or (string-equal "" cur-line)
+                (and regexp (string-match regexp cur-line)))
+      (push cur-line ret))
+#+END_SRC
+
+*** or, even more aggressively (perhaps even using string-blank-p instead of string-empty-p?):
+
+#+BEGIN_SRC emacs-lisp
+    (and (not (string-empty-p cur-line))
+         (not (and regexp (string-match regexp cur-line)))
+         (push cur-line ret))
+#+END_SRC
+
+** TODO Could the last conditional in format-table-remove-noise be written with (when ret ...) instead of (if (not ret) nil ...)?
+** TODO Rather than
+
+#+BEGIN_SRC emacs-lisp
+(let* ((lines (split-string str "[
+
+]+"))...)
+#+END_SRC
+
+which incidentally contains two newlines, why not:
+
+#+BEGIN_SRC emacs-lisp
+(let* ((lines (split-string str "[\n]+")) ...)
+#+END_SRC
