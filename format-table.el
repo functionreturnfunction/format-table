@@ -251,7 +251,7 @@ otherwise values will be padded to the right with spaces."
     (format-table-assemble-table header body)))
 
 (defun format-table-cleanup-and-parse (str input-mode)
-  "Parse the given string STR using delimiater information in INPUT-MODE to a table of values as a plist."
+  "Parse the given string STR using delimiter information in INPUT-MODE to a table of values as a plist."
   (if (equal input-mode 'json)
       (format-table-parse-json str)
     (let* ((lines (split-string str "[

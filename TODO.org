@@ -1,5 +1,5 @@
 ** TODO Some docstrings are quite long which lets you pass package-lint and makes for good enough M-x apropos output, but they wrap poorly in M-x help.
-** TODO "delimiater" -> "delimiter"
+** DONE "delimiater" -> "delimiter"
 ** TODO Since you're using Emacs 25 you can use the string-trim functions (could format-table-trim-row be rewritten as just (string-trim row begin-row end-row)?
 ** TODO Could the first conditional in format-table-remove-noise be written either as:
 
