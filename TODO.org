@@ -21,7 +21,7 @@
 *** NOTE2 I'm wary of going all the way to string-blank-p as I wouldn't want to break potential compatibility with a table format which uses whitespace in a way I hadn't thought of.
 
 ** DONE Could the last conditional in format-table-remove-noise be written with (when ret ...) instead of (if (not ret) nil ...)?
-** TODO Rather than
+** DONE Rather than
 
 #+BEGIN_SRC emacs-lisp
 (let* ((lines (split-string str "[

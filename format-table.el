@@ -149,7 +149,7 @@
     (format-table-assemble-table header body)))
 
 (defun format-table-get-max-col-widths (table)
-  "Given the nested list TABLE of values, determine the length of the longest value in each column and return each in a list."
+  "Determine the length of the longest value in each column from TABLE and return as a list."
   (let ((last (make-list (length (car table)) 0)))
     (dolist (cur-row table last)
       (setq last
@@ -176,7 +176,10 @@ otherwise values will be padded to the right with spaces."
   (make-string length ?-))
 
 (defun format-table-render-separator-row (max-col-widths output-mode)
-  "Given the list of MAX-COL-WIDTHS and delimiter information in OUTPUT-MODE, render a row which separates the header row from the rest of the rows."
+  "Render a row which separates the header row from the rest of the rows.
+
+Columns will be spaced accrding to MAX-COL-WIDTHS and delimited using strings
+from OUTPUT-MODE."
   (append
    (list
     (plist-get output-mode :separator-begin-row))
@@ -195,7 +198,7 @@ otherwise values will be padded to the right with spaces."
     (json-encode vec)))
 
 (defun format-table-render-table (table output-mode)
-  "Given the TABLE of values and delimiter information in OUTPUT-MODE, re-render the table as a string."
+  "Re-render the TABLE of values as a string using delimiter information in OUTPUT-MODE."
   (if (equal output-mode 'json)
       (list (format-table-render-json table))
     (let ((top-border-fn (plist-get output-mode :top-border-fn))
@@ -241,7 +244,7 @@ otherwise values will be padded to the right with spaces."
     (format-table-assemble-table header body)))
 
 (defun format-table-cleanup-and-parse (str input-mode)
-  "Parse the given string STR using delimiter information in INPUT-MODE to a table of values as a plist."
+  "Parse the given string STR using delimiter information in INPUT-MODE to a plist."
   (if (equal input-mode 'json)
       (format-table-parse-json str)
     (let* ((lines (split-string str "[\n]+"))
@@ -251,7 +254,11 @@ otherwise values will be padded to the right with spaces."
           (format-table-parse-table lines col-widths input-mode))))))
 
 (defun format-table (str input-mode output-mode)
-  "Process the given string STR containing a table in a format specified by INPUT-MODE, gather and reformat the table contained within to the format specified by OUTPUT-MODE."
+  "Reformat tabular data.
+
+Process the given string STR containing a table in a format specified by
+INPUT-MODE, gather and reformat the table contained within to the format
+specified by OUTPUT-MODE."
   (let* ((input-mode (format-table-get-format input-mode))
          (output-mode (format-table-get-format output-mode))
          (table (format-table-cleanup-and-parse str input-mode)))
