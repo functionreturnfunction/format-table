@@ -98,9 +98,9 @@
          (regexp (if (not row-count-format) nil (format row-count-format "[[:digit:]]+")))
          ret)
     (dolist (cur-line (reverse lines) ret)
-      (if (not (or (string-equal "" cur-line)
-                   (if (not regexp) nil (string-match regexp cur-line))))
-          (push cur-line ret)))
+      (unless (or (string-empty-p cur-line)
+                  (and regexp (string-match regexp cur-line)))
+        (push cur-line ret)))
     (if (not ret) nil
       (setq ret (if (plist-get input-mode :top-border-fn) (-slice ret 1) ret))
       (if (plist-get input-mode :top-border-fn)
