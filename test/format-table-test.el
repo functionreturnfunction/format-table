@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (require 'ert)
+(require 'ert-expectations)
 (require 'format-table)
 (require 'format-table-test-helper)
 
@@ -346,3 +347,14 @@
 (ert-deftest format-table-should-not-choke-on-mysql-string-with-no-table ()
   (let ((expected "5 rows in set (0.00 sec)"))
     (should (string-equal expected (format-table expected 'mysql 'mysql)))))
+
+;;;;;;;;;;;;;;;;;;general stuff;;;;;;;;;;;;;;;;;;;
+
+(ert-deftest format-table-should-error-when-presented-with-unknown-input-format ()
+  (should-error (format-table "" 'do-not-trust-this-man 'org)))
+
+(ert-deftest format-table-should-error-when-presented-with-unknown-output-format ()
+  (should-error (format-table "" 'org 'do-not-trust-this-man)))
+
+(ert-deftest format-table-should-allow-completely-empty-string ()
+  (should (string-equal "" (format-table "" 'org 'org))))
