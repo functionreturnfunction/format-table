@@ -151,7 +151,9 @@ separators should look like."
           :row-count (length body))))
 
 (defun format-table-parse-table (lines col-widths input-mode)
-  "Parse the list of table LINES into a plist."
+  "Parse the list of table LINES into a plist.
+COL-WIDTHS is the list of column widths for each column, and INPUT-MODE is the
+input mode of the source string."
   (let* ((header (format-table-split-row (car lines) col-widths input-mode))
          (body (--map (format-table-split-row it col-widths input-mode) (-slice lines 2))))
     (format-table-assemble-table header body)))
