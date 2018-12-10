@@ -7,4 +7,4 @@
 (require 'format-table)
 
 (provide 'format-table-test-helper)
-;;; test-helper.el ends here
+;;; format-table-test-helper.el ends here
