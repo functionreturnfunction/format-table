@@ -1,4 +1,4 @@
-* format-table [[https://travis-ci.org/functionreturnfunction/format-table][https://travis-ci.org/functionreturnfunction/format-table.png?branch=master]] [[https://coveralls.io/github/functionreturnfunction/format-table][https://coveralls.io/repos/functionreturnfunction/format-table/badge.svg?branch=master&service=github]]
+* format-table [[https://travis-ci.org/functionreturnfunction/format-table][https://travis-ci.org/functionreturnfunction/format-table.png?branch=master]] [[https://coveralls.io/github/functionreturnfunction/format-table][https://coveralls.io/repos/github/functionreturnfunction/format-table/badge.svg?branch=master]]
 Emacs can access many RDBMS systems via their command-line utilities using SQLi/comint, however each utility has its own output format for tables and affected row counts.  This library allows for conversion between the output formats of many common RDBMS systems, as well as org tables and json.
 
 ** Usage
