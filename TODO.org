@@ -20,7 +20,7 @@
 *** NOTE  The version using `and' is slightly more concise, but I believe the compromise I made between the two suggestions to be more readable.
 *** NOTE2 I'm wary of going all the way to string-blank-p as I wouldn't want to break potential compatibility with a table format which uses whitespace in a way I hadn't thought of.
 
-** TODO Could the last conditional in format-table-remove-noise be written with (when ret ...) instead of (if (not ret) nil ...)?
+** DONE Could the last conditional in format-table-remove-noise be written with (when ret ...) instead of (if (not ret) nil ...)?
 ** TODO Rather than
 
 #+BEGIN_SRC emacs-lisp

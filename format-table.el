@@ -95,13 +95,13 @@
 (defun format-table-remove-noise (lines input-mode)
   "Given the set of table LINES and some extra information in INPUT-MODE, filter out any empty lines or lines which otherwise do not belong to the table of values."
   (let* ((row-count-format (plist-get input-mode :row-count-format))
-         (regexp (if (not row-count-format) nil (format row-count-format "[[:digit:]]+")))
+         (regexp (when row-count-format (format row-count-format "[[:digit:]]+")))
          ret)
     (dolist (cur-line (reverse lines) ret)
       (unless (or (string-empty-p cur-line)
                   (and regexp (string-match regexp cur-line)))
         (push cur-line ret)))
-    (if (not ret) nil
+    (when ret
       (setq ret (if (plist-get input-mode :top-border-fn) (-slice ret 1) ret))
       (if (plist-get input-mode :top-border-fn)
           (-slice ret 0 (1- (length ret))) ret))))
@@ -247,7 +247,7 @@ otherwise values will be padded to the right with spaces."
     (let* ((lines (split-string str "[
 ]+"))
            (lines (format-table-remove-noise lines input-mode)))
-      (if (not lines) nil
+      (when lines
         (let* ((col-widths (format-table-get-col-widths (car (cdr lines)) input-mode)))
           (format-table-parse-table lines col-widths input-mode))))))
 
