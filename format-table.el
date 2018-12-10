@@ -73,11 +73,11 @@
     (json . json)))
 
 (defun format-table-pad-right (value length)
-  "Pad the string VALUE to the length specified by LENGTH using spaces to the right."
+  "Pad the string VALUE to the LENGTH specified using spaces to the right."
   (format (concat "%-" (number-to-string length) "s") value))
 
 (defun format-table-pad-center (value length)
-  "Pad the string VALUE to the length specified by LENGTH by surrounding with spaces."
+  "Pad the string VALUE to the LENGTH specified by surrounding with spaces."
   (let* ((value-length (length value))
          (left-length (/ (- length value-length) 2))
          (right-length (+ left-length
@@ -93,44 +93,42 @@
      (make-string right-length ? ))))
 
 (defun format-table-remove-noise (lines input-mode)
+  "Remove lines which constitute noise, such as empty lines or results count.
+LINES is the list of source lines, split on newlines.  INPUT-MODE is used to
+determine what the results count should look like."
   "Given the set of table LINES and some extra information in INPUT-MODE, filter out any empty lines or lines which otherwise do not belong to the table of values."
   (let* ((row-count-format (plist-get input-mode :row-count-format))
-         (regexp (if (not row-count-format) nil (format row-count-format "[[:digit:]]+")))
+         (regexp (when row-count-format (format row-count-format "[[:digit:]]+")))
          ret)
     (dolist (cur-line (reverse lines) ret)
-      (if (not (or (string-equal "" cur-line)
-                   (if (not regexp) nil (string-match regexp cur-line))))
-          (push cur-line ret)))
-    (if (not ret) nil
+      (unless (or (string-empty-p cur-line)
+                  (and regexp (string-match regexp cur-line)))
+        (push cur-line ret)))
+    (when ret
       (setq ret (if (plist-get input-mode :top-border-fn) (-slice ret 1) ret))
       (if (plist-get input-mode :top-border-fn)
           (-slice ret 0 (1- (length ret))) ret))))
 
-(defun format-table-trim-row (row begin-row end-row)
-  "Given the string ROW trim the string BEGIN-ROW from the beginning and END-ROW from the end."
-  (replace-regexp-in-string
-   (concat "^" (regexp-quote begin-row))
-   ""
-   (replace-regexp-in-string
-    (concat (regexp-quote end-row) "$")
-    ""
-    row)))
-
 (defun format-table-get-col-widths (dashes input-mode)
-  "Using the line of all DASHES from the table and the INPUT-MODE, determine the widths of the columns and return them in a list."
-  (let* ((separator-begin-row (plist-get input-mode :separator-begin-row))
-         (separator-end-row (plist-get input-mode :separator-end-row))
+  "Determine the widths of each column in the table.
+DASHES is a string containing the row from the source table which separates the
+header from the body of the table.  INPUT-MODE is used to determine what column
+separators and such should look like."
+  (let* ((separator-begin-row (regexp-quote (plist-get input-mode :separator-begin-row)))
+         (separator-end-row (regexp-quote (plist-get input-mode :separator-end-row)))
          (separator-col-separator (plist-get input-mode :separator-col-separator))
-         (dashes (format-table-trim-row dashes separator-begin-row separator-end-row)))
+         (dashes (string-trim dashes separator-begin-row separator-end-row)))
     (-map #'length (split-string dashes
                                  (regexp-quote separator-col-separator)))))
 
 (defun format-table-split-row (row col-widths input-mode)
-  "Split the given string ROW based on the fixed positions listed in COL-WIDTHS and any additional information in INPUT-MODE."
+  "Split the given string ROW based on the fixed positions listed in COL-WIDTHS.
+INPUT-MODE is used to determine what beginning of row, end of row, and column
+separators should look like."
   (let* ((begin-row (plist-get input-mode :begin-row))
          (end-row (plist-get input-mode :end-row))
          (col-separator (plist-get input-mode :col-separator))
-         (row (format-table-trim-row row begin-row end-row))
+         (row (string-trim row begin-row end-row))
          split)
     (reverse
      (dolist (cur-width col-widths split)
@@ -145,7 +143,7 @@
                                 cur-width))))))))
 
 (defun format-table-assemble-table (header body)
-  "Given the HEADER list of column names and nested list of values BODY, return an alist with both and some extra meta information about same."
+  "Assemble the HEADER and BODY of the table into an alist with some extra info."
   (let ((max-col-widths (format-table-get-max-col-widths (cons header body))))
     (list :header header
           :body body
@@ -153,13 +151,13 @@
           :row-count (length body))))
 
 (defun format-table-parse-table (lines col-widths input-mode)
-  "Given the list of table LINES, set of COL-WIDTHS, and INPUT-MODE, build a table of values as a plist."
+  "Parse the list of table LINES into a plist."
   (let* ((header (format-table-split-row (car lines) col-widths input-mode))
          (body (--map (format-table-split-row it col-widths input-mode) (-slice lines 2))))
     (format-table-assemble-table header body)))
 
 (defun format-table-get-max-col-widths (table)
-  "Given the nested list TABLE of values, determine the length of the longest value in each column and return each in a list."
+  "List the length of the longest value in each column from TABLE."
   (let ((last (make-list (length (car table)) 0)))
     (dolist (cur-row table last)
       (setq last
@@ -167,7 +165,6 @@
 
 (defun format-table-render-row (row max-col-widths output-mode &optional pad-fn)
   "Render a table row with the proper column separators and a newline.
-
 Arguments are the list of values ROW, the list of MAX-COL-WIDTHS, and delimiter
 information in OUTPUT-MODE.  Optionally use PAD-FN to pad each column value,
 otherwise values will be padded to the right with spaces."
@@ -186,7 +183,9 @@ otherwise values will be padded to the right with spaces."
   (make-string length ?-))
 
 (defun format-table-render-separator-row (max-col-widths output-mode)
-  "Given the list of MAX-COL-WIDTHS and delimiter information in OUTPUT-MODE, render a row which separates the header row from the rest of the rows."
+  "Render a row which separates the header row from the rest of the rows.
+Columns will be spaced accrding to MAX-COL-WIDTHS and delimited using strings
+from OUTPUT-MODE."
   (append
    (list
     (plist-get output-mode :separator-begin-row))
@@ -205,7 +204,7 @@ otherwise values will be padded to the right with spaces."
     (json-encode vec)))
 
 (defun format-table-render-table (table output-mode)
-  "Given the TABLE of values and delimiter information in OUTPUT-MODE, re-render the table as a string."
+  "Re-render the TABLE of values as a string using delimiter information in OUTPUT-MODE."
   (if (equal output-mode 'json)
       (list (format-table-render-json table))
     (let ((top-border-fn (plist-get output-mode :top-border-fn))
@@ -251,18 +250,20 @@ otherwise values will be padded to the right with spaces."
     (format-table-assemble-table header body)))
 
 (defun format-table-cleanup-and-parse (str input-mode)
-  "Parse the given string STR using delimiater information in INPUT-MODE to a table of values as a plist."
+  "Parse the given STR using delimiter information in INPUT-MODE to a plist."
   (if (equal input-mode 'json)
       (format-table-parse-json str)
-    (let* ((lines (split-string str "[
-]+"))
+    (let* ((lines (split-string str "[\n]+"))
            (lines (format-table-remove-noise lines input-mode)))
-      (if (not lines) nil
+      (when lines
         (let* ((col-widths (format-table-get-col-widths (car (cdr lines)) input-mode)))
           (format-table-parse-table lines col-widths input-mode))))))
 
 (defun format-table (str input-mode output-mode)
-  "Process the given string STR containing a table in a format specified by INPUT-MODE, gather and reformat the table contained within to the format specified by OUTPUT-MODE."
+  "Reformat tabular data.
+Process the given string STR containing a table in a format specified by
+INPUT-MODE, gather and reformat the table contained within to the format
+specified by OUTPUT-MODE."
   (let* ((input-mode (format-table-get-format input-mode))
          (output-mode (format-table-get-format output-mode))
          (table (format-table-cleanup-and-parse str input-mode)))
