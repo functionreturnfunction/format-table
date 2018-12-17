@@ -5,7 +5,7 @@
 ;; Author:  Jason Duncan <jasond496@msn.com>
 ;; Version: 0.0.1
 ;; Keywords: data
-;; URL: https://github.com/functionreturnfurnction/format-table
+;; URL: https://github.com/functionreturnfunction/format-table
 ;; Package-Requires: ((emacs "25") (dash "2.14.1"))
 
 ;; This program is free software; you can redistribute it and/or modify
